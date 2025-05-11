@@ -44,7 +44,9 @@ def setup_logger(name: str = None, level: LogLevel = "INFO") -> logging.Logger:
     if "file" in log_outputs:
         log_dir = os.getenv("LOG_DIR", "./logs")
         os.makedirs(log_dir, exist_ok=True)
-        file_handler = logging.FileHandler(f"{log_dir}/{name or 'app'}.log", mode="a", encoding="utf-8")
+
+        # Все логи — в один файл
+        file_handler = logging.FileHandler(f"{log_dir}/quant_trading_bot.log", mode="a", encoding="utf-8")
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
@@ -57,3 +59,4 @@ def setup_logger(name: str = None, level: LogLevel = "INFO") -> logging.Logger:
             logger.addHandler(tg_handler)
 
     return logger
+
