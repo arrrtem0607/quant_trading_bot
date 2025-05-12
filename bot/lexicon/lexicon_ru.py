@@ -16,12 +16,12 @@ LEXICON_RU = {
 
 
     # Главное меню
-    "main_menu_title": "🧭 Главное меню",
-    "menu_subs": "📦 Витрина подписок",
+    "main_menu_title": "🏠 Главное меню",
+    "menu_subs": "🔑 Витрина подписок",
     "menu_ref": "👥 Партнёрская программа",
-    "menu_site": "🌐 Сайт",
+    "menu_site": "🌐 Веб-сайт",
     "menu_support": "🛠 Техподдержка",
-    "menu_exchanges": "💱 Поддерживаемые биржи",
+    "menu_exchanges": "📊 Биржи",
 
     # Отказ от ответственности
     "terms_text": (
@@ -31,7 +31,32 @@ LEXICON_RU = {
         "Используя этого бота, вы подтверждаете, что понимаете и принимаете риски, "
         "связанные с криптотрейдингом."
     ),
-    "terms_read_btn": "📄 Ознакомиться",
+    "terms_read_btn": "📜 Прочитать условия",
     "terms_accept": "✅ Принять",
     "terms_url": "https://telegra.ph/UVEDOMLENIE-O-RISKAH-04-25",
+    # Витрина подписок
+    "subs_active_title": "📋 Активные подписки:",
+    "subs_no_active": "❌ У вас пока нет активных подписок.",
+    "subs_recommend_renew": "🔔 <i>Рекомендуем продлить</i>",
+    "subs_until": "✅ До: <code>{end_date}</code>",
+
+    "subs_store_title": "🛍 Витрина подписок:",
+    "subs_product_line": "<b>{name}</b>\n{desc}\n💵 <code>{price} USDT</code> / {days} дней",
+
+    "btn_extend": "💳 Продлить подписку",
+    "btn_connect_exchange": "📡 Подключить биржу",
+    "btn_pay": "💰 Оплатить подписку",
+    "btn_back": "🔙 Назад в меню",
+
+    "subs_title": "📄 Активные подписки:",
+    "btn_renew": "🔄 Продлить подписку",
+    "btn_open_store": "🔑 Открыть витрину",
+    "btn_back_to_menu": "🔙 Назад в меню",
+    "store_select_product": "📦 Выберите продукт для подробной информации:",
+    "subs_product_selected": "ℹ️ Вы выбрали продукт с ID {product_id}",
+
+    "store_title": "📦 Витрина продуктов:",
+    "store_product_button": "🔘 {item.name}",
+
+
 }

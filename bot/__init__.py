@@ -6,6 +6,7 @@ from bot.middlewares.is_admin_middleware import IsAdminMiddleware
 from bot.handlers.handlers import router as start_router
 from bot.dialogs.start_dialog import start_dialog as start_dialog_router
 from bot.dialogs.main_menu_dialog import main_menu_dialog as main_menu_dialog_router
+from bot.dialogs.products_dialog import unified_store_dialog as products_dialog_router
 from database.entities.core import Database
 from configurations import get_config
 
@@ -26,6 +27,7 @@ async def get_all_routers():
     router.include_router(start_router)
     router.include_router(start_dialog_router)
     router.include_router(main_menu_dialog_router)
+    router.include_router(products_dialog_router)
 
     setup_dialogs(router)
 

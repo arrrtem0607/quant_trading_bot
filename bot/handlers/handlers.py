@@ -17,20 +17,19 @@ async def start_handler(message: Message, dialog_manager: DialogManager):
     user_id = message.from_user.id
     referrer_id = None
 
-    # Обрабатываем реферальный старт
     if message.text and message.text.startswith("/start ") and message.text.split(" ")[1].isdigit():
         referrer_id = int(message.text.split(" ")[1])
         if referrer_id == user_id:
             referrer_id = None
 
-    # Регистрируем пользователя (если нужно)
     await orm.users.register_user(user_id, referrer_id)
+    user = await orm.users.get_user(user_id)
 
-    # Стартуем диалог регистрации
-    await dialog_manager.start(
-        StartDialog.language_select,
-        mode=StartMode.RESET_STACK
-    )
+    # Если пользователь уже подтверждал условия — сразу главное меню
+    if user and user.terms_accepted_at:
+        await dialog_manager.start(MainMenu.main, mode=StartMode.RESET_STACK)
+    else:
+        await dialog_manager.start(StartDialog.language_select, mode=StartMode.RESET_STACK)
 
 @router.message(Command("drop_tables"))
 async def drop_tables_handler(message: Message):
@@ -54,4 +53,6 @@ async def menu_handler(message: Message, dialog_manager: DialogManager):
 
 @router.message(Command("language"))
 async def language_handler(message: Message, dialog_manager: DialogManager):
-    await dialog_manager.start(state=StartDialog.language_select, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(StartDialog.language_select, mode=StartMode.RESET_STACK)
+
+

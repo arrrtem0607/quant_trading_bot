@@ -1,7 +1,10 @@
-from sqlalchemy import inspect, text
+from sqlalchemy import inspect, text, select
 
 from database.entities.core import Base, Database
 from database.controller.users_orm import UsersORM
+from database.controller.products_orm import ProductsORM
+from database.controller.subscriptions_orm import SubscriptionsORM
+from database.db_utils import session_manager
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -11,6 +14,8 @@ class ORMController:
     def __init__(self, db: Database = Database()):
         self.db = db
         self.users = UsersORM(self)
+        self.products = ProductsORM(self)
+        self.subscriptions = SubscriptionsORM(self)
         logger.info("ORMController initialized")
 
     async def create_tables(self):
@@ -62,4 +67,74 @@ class ORMController:
             for table in tables:
                 await conn.execute(text(f'TRUNCATE TABLE "{table.name}" RESTART IDENTITY CASCADE'))
             logger.info("🧹 Все таблицы очищены (TRUNCATE).")
+
+    @session_manager
+    async def init_demo_products(self, session):
+        from database.entities.models import Product
+
+        existing = await session.execute(select(Product))
+        if existing.scalars().first():
+            return  # уже есть
+
+        products = [
+            Product(
+                name="Закрытый Копи Трейдинг",
+                description="🤖 Автоматизированная торговля с копированием сделок алготрейдеров.",
+                price_usdt=250.0,
+                duration_days=365,
+                is_active=True
+            ),
+            Product(
+                name="⚠️ Высоко-рискованный сигнальный бот",
+                description="🔥 Сигналы для агрессивной ручной торговли. Идеально для опытных трейдеров.",
+                price_usdt=0.0,
+                duration_days=0,
+                is_active=False
+            ),
+            Product(
+                name="🧠 Бот крипто ОПЦИОНОВ",
+                description="Скоро будет доступно",
+                price_usdt=0.0,
+                duration_days=0,
+                is_active=False
+            ),
+            Product(
+                name="⚡️ Майнинг БУУУУСТ",
+                description="Подать заявку на ускорение майнинга через наш сервис.",
+                price_usdt=0.0,
+                duration_days=0,
+                is_active=True
+            ),
+            Product(
+                name="🧩 Индивидуальная стратегия",
+                description="Персональный подход к трейдингу. Заполните заявку.",
+                price_usdt=0.0,
+                duration_days=0,
+                is_active=True
+            ),
+            Product(
+                name="🔒 Секретная разработка",
+                description="Скоро будет доступно.",
+                price_usdt=0.0,
+                duration_days=0,
+                is_active=False
+            ),
+            Product(
+                name="⚙️ Помощь с размещением оборудования",
+                description="Подать заявку для сопровождения в подключении/размещении майнинга.",
+                price_usdt=0.0,
+                duration_days=0,
+                is_active=True
+            ),
+            Product(
+                name="💻 Купить майнинг оборудование",
+                description="Проконсультируем и поможем приобрести оборудование. Подайте заявку.",
+                price_usdt=0.0,
+                duration_days=0,
+                is_active=True
+            ),
+        ]
+
+        session.add_all(products)
+
 
