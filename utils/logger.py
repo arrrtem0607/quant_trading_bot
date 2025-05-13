@@ -46,7 +46,7 @@ def setup_logger(name: str = None, level: LogLevel = "INFO") -> logging.Logger:
         os.makedirs(log_dir, exist_ok=True)
 
         # Все логи — в один файл
-        file_handler = logging.FileHandler(f"{log_dir}/quant_trading_bot.log", mode="a", encoding="utf-8")
+        file_handler = logging.FileHandler(f"{log_dir}/app.log", mode="a", encoding="utf-8")
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
