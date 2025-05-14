@@ -37,4 +37,5 @@ async def initialize_database():
     from database.controller.orm_instance import orm_instance as orm
     await orm.create_tables()
     await orm.init_demo_products()
+    await orm.init_demo_exchanges()
     logger.info("Таблицы инициализированы, тарифы добавлены")

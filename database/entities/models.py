@@ -96,3 +96,21 @@ class Log(Base):
     level: Mapped[str] = mapped_column(String(20), nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
+
+
+class Exchange(Base):
+    __tablename__ = "exchanges"
+    __table_args__ = {"schema": "public"}
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+
+    manual_ru: Mapped[str] = mapped_column(Text, nullable=True)
+    manual_en: Mapped[str] = mapped_column(Text, nullable=True)
+
+    copy_url_public: Mapped[str] = mapped_column(Text, nullable=True)
+    copy_url_private: Mapped[str] = mapped_column(Text, nullable=True)
+
+    referral_url: Mapped[str] = mapped_column(Text, nullable=True)
+    referral_code: Mapped[str] = mapped_column(String(100), nullable=True)
+

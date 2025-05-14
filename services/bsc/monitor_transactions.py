@@ -73,7 +73,7 @@ async def process_transactions():
 
             if db_tx.subscription_id:
                 logger.info(f"📍 Готовим активацию подписки: subscription_id={db_tx.subscription_id}")
-                await orm.subscriptions.activate_subscription(db_tx.subscription_id)
+                await orm.subscriptions.activate_or_extend(db_tx.subscription_id)
                 logger.info(
                     f"🎟️ {LEXICON_RU['tx_subscription_activated'].format(db_tx.subscription_id, db_tx.user_id)}"
                 )

@@ -26,5 +26,12 @@ class SubscriptionDialog(StatesGroup):
     tx_pending = State()
     confirmed = State()
 
+class ExchangeDialog(StatesGroup):
+    choose_exchange = State()
+    enter_uid = State()
+    show_links = State()
+
+class PartnersDialog(StatesGroup):
+    main = State()
 
 

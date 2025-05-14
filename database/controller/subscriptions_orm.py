@@ -11,6 +11,24 @@ class SubscriptionsORM:
     def __init__(self, controller):
         self.db = controller.db
 
+    async def _apply_activation_logic(self, session: AsyncSession, subscription: Subscription):
+        stmt = select(Product.duration_days).where(Product.id == subscription.product_id)
+        result = await session.execute(stmt)
+        duration_days = result.scalar_one_or_none()
+
+        if duration_days is None:
+            return False
+
+        now = datetime.utcnow()
+
+        if subscription.status != SubscriptionStatus.ACTIVE or subscription.end_date is None or subscription.end_date < now:
+            subscription.status = SubscriptionStatus.ACTIVE
+            subscription.start_date = now
+            subscription.end_date = now + timedelta(days=duration_days)
+        else:
+            subscription.end_date += timedelta(days=duration_days)
+        return True
+
     @session_manager
     async def get_user_active_subscriptions(self, session, user_id: int) -> list[Subscription]:
         stmt = select(Subscription).where(
@@ -64,16 +82,38 @@ class SubscriptionsORM:
         subscription = await session.get(Subscription, subscription_id)
         if not subscription:
             return
+        await self._apply_activation_logic(session, subscription)
 
-        # Получим duration_days из product
+    @session_manager
+    async def extend_subscription(self, session: AsyncSession, subscription_id: int) -> bool:
+        subscription = await session.get(Subscription, subscription_id)
+        if not subscription or subscription.status != SubscriptionStatus.ACTIVE:
+            return False
+
         stmt = select(Product.duration_days).where(Product.id == subscription.product_id)
         result = await session.execute(stmt)
         duration_days = result.scalar_one_or_none()
 
         if duration_days is None:
-            return  # продукт не найден
+            return False
 
-        now = datetime.utcnow()
-        subscription.status = SubscriptionStatus.ACTIVE
-        subscription.start_date = now
-        subscription.end_date = now + timedelta(days=duration_days)
+        subscription.end_date = (subscription.end_date or datetime.utcnow()) + timedelta(days=duration_days)
+        return True
+
+    @session_manager
+    async def activate_or_extend(self, session: AsyncSession, subscription_id: int):
+        subscription = await session.get(Subscription, subscription_id)
+        if not subscription:
+            return
+        await self._apply_activation_logic(session, subscription)
+
+    @session_manager
+    async def update_exchange_uid(self, session, subscription_id: int, exchange: str, uid: str):
+        subscription = await session.get(Subscription, subscription_id)
+        if not subscription:
+            raise ValueError("Подписка не найдена")
+        subscription.exchange = exchange
+        subscription.exchange_uid = uid
+        return True
+
+

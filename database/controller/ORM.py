@@ -5,11 +5,11 @@ from database.controller.users_orm import UsersORM
 from database.controller.products_orm import ProductsORM
 from database.controller.subscriptions_orm import SubscriptionsORM
 from database.controller.transactions_orm import TransactionsORM
+from database.controller.exchanges_orm import ExchangesORM
 from database.db_utils import session_manager
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
-
 
 class ORMController:
     def __init__(self, db: Database = Database()):
@@ -18,6 +18,7 @@ class ORMController:
         self.products = ProductsORM(self)
         self.subscriptions = SubscriptionsORM(self)
         self.transactions = TransactionsORM(self)
+        self.exchanges = ExchangesORM(self)
         logger.info("ORMController initialized")
 
     async def create_tables(self):
@@ -138,5 +139,59 @@ class ORMController:
         ]
 
         session.add_all(products)
+
+    @session_manager
+    async def init_demo_exchanges(self, session):
+        from database.entities.models import Exchange
+
+        existing = await session.execute(select(Exchange))
+        if existing.scalars().first():
+            return  # уже есть биржи
+
+        exchanges = [
+            Exchange(
+                name="Bybit",
+                manual_ru="https://telegra.ph/Instrukciya-po-podklyucheniyu-k-torgovomu-algoritmu-04-26-3",
+                manual_en="https://telegra.ph/Instructions-for-connecting-to-the-trading-algorithm-04-27-4",
+                copy_url_private="https://i.bybit.com/1K2SVab4?action=inviteToCopy",
+                referral_url="https://www.bybit.com/invite?ref=51RK2X",
+                referral_code="51RK2X"
+            ),
+            Exchange(
+                name="BingX",
+                manual_ru="https://telegra.ph/Instrukciya-po-podklyucheniyu-k-torgovomu-algoritmu-04-21",
+                manual_en="https://telegra.ph/Instructions-for-connecting-to-the-trading-algorithm-04-27-3",
+                copy_url_private="https://general.bingx.com/4Apbwl",
+                referral_url="https://bingx.com/partner/TradingBRO/",
+                referral_code="TradingBRO"
+            ),
+            Exchange(
+                name="Blofin",
+                manual_ru="https://telegra.ph/Instrukciya-po-podklyucheniyu-k-torgovomu-algoritmu-04-26-2",
+                manual_en="https://telegra.ph/Instructions-for-connecting-to-the-trading-algorithm-04-27",
+                copy_url_private="https://general.bingx.com/2WmLfi",
+                referral_url="https://blofin.com/register?referral_code=tc8JY7",
+                referral_code="tc8JY7"
+            ),
+            Exchange(
+                name="OKX",
+                manual_ru="https://telegra.ph/Instrukciya-po-podklyucheniyu-k-torgovomu-algoritmu-04-26",
+                manual_en="https://telegra.ph/Instructions-for-connecting-to-the-trading-algorithm-04-27-5",
+                copy_url_private="https://okx.com/ul/F0j4Cbr",
+                referral_url="https://www.okx.com/join/13149794",
+                referral_code="13149794"
+            ),
+            Exchange(
+                name="Bitget",
+                manual_ru="https://telegra.ph/Instrukciya-po-podklyucheniyu-k-torgovomu-algoritmu-04-25",
+                manual_en="https://telegra.ph/Instructions-for-connecting-to-the-trading-algorithm-04-27-2",
+                copy_url_private="https://www.bitget.com/ru/copy-trading/trader/beb1497687bb3e53a390/futures?vipCode=e4ba&inviteCode=b9b34a728db73d51a390940767",
+                referral_url="https://partner.bitget.com/bg/TSQ3LM",
+                referral_code="TSQ3LM"
+            )
+        ]
+
+        session.add_all(exchanges)
+
 
 
