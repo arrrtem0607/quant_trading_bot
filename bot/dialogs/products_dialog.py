@@ -19,19 +19,15 @@ async def on_back_to_menu(callback: CallbackQuery, button: Button, manager: Dial
     from bot.utils.statesforms import MainMenu
     await manager.start(MainMenu.main, show_mode=ShowMode.EDIT)
 
-
 async def to_showcase(callback: CallbackQuery, button: Button, manager: DialogManager):
     await manager.switch_to(UnifiedStore.showcase, ShowMode.EDIT)
-
 
 async def to_dashboard(callback: CallbackQuery, button: Button, manager: DialogManager):
     await manager.switch_to(UnifiedStore.dashboard, ShowMode.EDIT)
 
-
 async def on_product_selected(callback: CallbackQuery, widget: Select, manager: DialogManager, item_id: int):
     manager.dialog_data["selected_product_id"] = int(item_id)
     await manager.switch_to(UnifiedStore.product_detail, ShowMode.EDIT)
-
 
 async def on_pay_subscription(callback: CallbackQuery, button: Button, manager: DialogManager):
     selected_product_id = manager.dialog_data.get("selected_product_id")
@@ -49,7 +45,6 @@ async def on_pay_subscription(callback: CallbackQuery, button: Button, manager: 
         },
         show_mode=ShowMode.EDIT
     )
-
 
 async def on_connect_exchange(callback: CallbackQuery, button: Button, manager: DialogManager):
     await callback.answer("🔗 Выберите биржу для подключения")
@@ -105,13 +100,15 @@ async def showcase_getter(dialog_manager: DialogManager, **kwargs):
     }
 
 async def product_detail_getter(dialog_manager: DialogManager, **kwargs):
-    product_id = dialog_manager.dialog_data.get("selected_product_id")
-    if product_id is None:
-        raise ValueError("selected_product_id отсутствует в dialog_data")
+    product_id = int(dialog_manager.dialog_data.get("selected_product_id"))
+    user_id = await orm.users.get_id_by_telegram(dialog_manager.event.from_user.id)
 
-    user_id = dialog_manager.event.from_user.id
     product = await orm.products.get_product_by_id(product_id)
-    active_sub = await orm.subscriptions.get_user_active_subscription_for_product(user_id=user_id, product_id=product_id)
+    dialog_manager.dialog_data["product_id"] = product.id
+    active_sub = await orm.subscriptions.get_user_active_subscription_for_product(
+        user_id=user_id,
+        product_id=product_id
+    )
 
     left_days = None
     if active_sub and active_sub.end_date:
@@ -120,7 +117,7 @@ async def product_detail_getter(dialog_manager: DialogManager, **kwargs):
     return {
         "product": product,
         "sub": active_sub,
-        "has_sub": bool(active_sub),
+        "has_sub": bool(active_sub),  # ✅ ЭТО ОБЯЗАТЕЛЬНО
         "left_days": left_days
     }
 

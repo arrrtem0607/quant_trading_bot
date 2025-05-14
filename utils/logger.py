@@ -40,7 +40,7 @@ def setup_logger(name: str = None, level: LogLevel = "INFO") -> logging.Logger:
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(formatter)
         logger.addHandler(handler)
-
+    """
     if "file" in log_outputs:
         log_dir = os.getenv("LOG_DIR", "./logs")
         os.makedirs(log_dir, exist_ok=True)
@@ -49,7 +49,7 @@ def setup_logger(name: str = None, level: LogLevel = "INFO") -> logging.Logger:
         file_handler = logging.FileHandler(f"{log_dir}/app.log", mode="a", encoding="utf-8")
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
-
+    """
     if "telegram" in log_outputs:
         tg_token = os.getenv("TELEGRAM_LOG_TOKEN")
         tg_chat_id = os.getenv("TELEGRAM_LOG_CHAT_ID")
