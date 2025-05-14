@@ -28,3 +28,9 @@ class ProductsORM:
     async def get_product_by_id(self, session, product_id: int):
         stmt = select(Product).where(Product.id == product_id)
         return await session.scalar(stmt)
+
+    @session_manager
+    async def get_product(self, session, product_id: int) -> Product | None:
+        return await session.scalar(
+            select(Product).where(Product.id == product_id)
+        )

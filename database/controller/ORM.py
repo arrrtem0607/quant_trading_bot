@@ -4,6 +4,7 @@ from database.entities.core import Base, Database
 from database.controller.users_orm import UsersORM
 from database.controller.products_orm import ProductsORM
 from database.controller.subscriptions_orm import SubscriptionsORM
+from database.controller.transactions_orm import TransactionsORM
 from database.db_utils import session_manager
 from utils.logger import setup_logger
 
@@ -16,6 +17,7 @@ class ORMController:
         self.users = UsersORM(self)
         self.products = ProductsORM(self)
         self.subscriptions = SubscriptionsORM(self)
+        self.transactions = TransactionsORM(self)
         logger.info("ORMController initialized")
 
     async def create_tables(self):
@@ -87,50 +89,50 @@ class ORMController:
             Product(
                 name="⚠️ Высоко-рискованный сигнальный бот",
                 description="🔥 Сигналы для агрессивной ручной торговли. Идеально для опытных трейдеров.",
-                price_usdt=0.0,
-                duration_days=0,
+                price_usdt=300.0,
+                duration_days=100,
                 is_active=False
             ),
             Product(
                 name="🧠 Бот крипто ОПЦИОНОВ",
                 description="Скоро будет доступно",
-                price_usdt=0.0,
-                duration_days=0,
+                price_usdt=350.0,
+                duration_days=150,
                 is_active=False
             ),
             Product(
                 name="⚡️ Майнинг БУУУУСТ",
                 description="Подать заявку на ускорение майнинга через наш сервис.",
-                price_usdt=0.0,
-                duration_days=0,
+                price_usdt=400.0,
+                duration_days=200,
                 is_active=True
             ),
             Product(
                 name="🧩 Индивидуальная стратегия",
                 description="Персональный подход к трейдингу. Заполните заявку.",
-                price_usdt=0.0,
-                duration_days=0,
+                price_usdt=1.0,
+                duration_days=1,
                 is_active=True
             ),
             Product(
                 name="🔒 Секретная разработка",
                 description="Скоро будет доступно.",
-                price_usdt=0.0,
-                duration_days=0,
+                price_usdt=14.0,
+                duration_days=1,
                 is_active=False
             ),
             Product(
                 name="⚙️ Помощь с размещением оборудования",
                 description="Подать заявку для сопровождения в подключении/размещении майнинга.",
-                price_usdt=0.0,
-                duration_days=0,
+                price_usdt=35.0,
+                duration_days=1,
                 is_active=True
             ),
             Product(
                 name="💻 Купить майнинг оборудование",
                 description="Проконсультируем и поможем приобрести оборудование. Подайте заявку.",
-                price_usdt=0.0,
-                duration_days=0,
+                price_usdt=100000.0,
+                duration_days=365,
                 is_active=True
             ),
         ]

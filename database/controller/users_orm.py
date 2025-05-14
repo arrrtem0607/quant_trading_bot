@@ -37,3 +37,17 @@ class UsersORM:
             user.terms_accepted_at = datetime.utcnow().replace(tzinfo=None)  # <-- FIX
             return True
         return False
+
+    @session_manager
+    async def get_id_by_telegram(self, session, telegram_id: int) -> int | None:
+        result = await session.execute(select(User.id).where(User.telegram_id == telegram_id))
+        return result.scalar()
+
+    @session_manager
+    async def get_telegram_id_by_id(self, session, user_id: int) -> int | None:
+        stmt = select(User.telegram_id).where(User.id == user_id)
+        result = await session.execute(stmt)
+        return result.scalar_one_or_none()
+
+
+

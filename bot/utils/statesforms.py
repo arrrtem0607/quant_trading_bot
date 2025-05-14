@@ -20,4 +20,11 @@ class UnifiedStore(StatesGroup):
     payment = State()          # (позже) окно оплаты
     exchange_select = State()  # (позже) выбор биржи
 
+class SubscriptionDialog(StatesGroup):
+    show_wallet = State()
+    enter_tx_hash = State()
+    tx_pending = State()
+    confirmed = State()
+
+
 

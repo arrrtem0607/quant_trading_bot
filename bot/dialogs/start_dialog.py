@@ -2,7 +2,7 @@ import random
 
 from aiogram import Bot
 from aiogram.types import ChatMember, ChatMemberMember, ChatMemberOwner, ChatMemberAdministrator, CallbackQuery, Message
-from aiogram_dialog import Dialog, Window, DialogManager, StartMode
+from aiogram_dialog import Dialog, Window, DialogManager, StartMode, ShowMode
 from aiogram_dialog.widgets.kbd import Button, Row, Group, Url
 from aiogram_dialog.widgets.text import Const, Format
 from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
@@ -43,10 +43,10 @@ async def on_language_selected(_: CallbackQuery, button: Button, manager: Dialog
 
     if user and user.terms_accepted_at:
         logger.info(f"[LANGUAGE] Пользователь {user_id} уже принял условия, переход в главное меню")
-        await manager.start(MainMenu.main, mode=StartMode.RESET_STACK)
+        await manager.start(MainMenu.main, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
     else:
         logger.info(f"[LANGUAGE] Пользователь {user_id} не принял условия, переход к капче")
-        await manager.switch_to(StartDialog.captcha)
+        await manager.switch_to(StartDialog.captcha, show_mode=ShowMode.EDIT)
 
 language_window = Window(
     Const(LEXICON_RU["language_prompt"]),
@@ -89,7 +89,7 @@ async def on_captcha_success(
 
     if data == correct:
         logger.info(f"[CAPTCHA] Пользователь {user_id} успешно прошёл капчу")
-        await dialog_manager.switch_to(StartDialog.terms)
+        await dialog_manager.switch_to(StartDialog.terms, show_mode=ShowMode.DELETE_AND_SEND)
     else:
         attempts = dialog_manager.dialog_data.get("captcha_attempts", 0) + 1
         dialog_manager.dialog_data["captcha_attempts"] = attempts
@@ -99,7 +99,7 @@ async def on_captcha_success(
             minutes = random.randint(*BLOCK_MINUTES_RANGE)
             await redis.set(f"captcha_block:{user_id}", "1", ex=minutes * 60)
             await message.answer(LEXICON_RU["captcha_failed"].format(minutes=minutes))
-            await dialog_manager.switch_to(StartDialog.blocked)
+            await dialog_manager.switch_to(StartDialog.blocked, show_mode=ShowMode.DELETE_AND_SEND)
         else:
             await message.answer(LEXICON_RU["captcha_wrong"].format(tries_left=MAX_ATTEMPTS - attempts))
 
@@ -131,7 +131,7 @@ async def on_terms_accepted(_: CallbackQuery, __: Button, manager: DialogManager
     user_id = manager.event.from_user.id
     await orm.users.confirm_terms(user_id)
     logger.info(f"[TERMS] Пользователь {user_id} принял условия. Переход к проверке подписки.")
-    await manager.switch_to(StartDialog.subscription_check)
+    await manager.switch_to(StartDialog.subscription_check, show_mode=ShowMode.EDIT)
 
 terms_window = Window(
     Const(LEXICON_RU["terms_text"]),
@@ -152,9 +152,9 @@ async def on_retry(_: CallbackQuery, __: Button, manager: DialogManager):
     user_id = manager.event.from_user.id
     ttl = await redis.ttl(f"captcha_block:{user_id}")
     if ttl <= 0:
-        await manager.switch_to(StartDialog.captcha)
+        await manager.switch_to(StartDialog.captcha, show_mode=ShowMode.EDIT)
     else:
-        await manager.switch_to(StartDialog.blocked)
+        await manager.switch_to(StartDialog.blocked, show_mode=ShowMode.EDIT)
 
 blocked_window = Window(
     Format("⏳ Вы временно заблокированы.\n"
@@ -190,22 +190,10 @@ async def on_check_subscription(callback: CallbackQuery, button: Button, manager
     if subscribed:
         logger.info(f"[SUBSCRIPTION] Пользователь {user_id} подписан — переход в главное меню")
         await callback.answer("✅ Подписка подтверждена", show_alert=True)
-        await manager.start(MainMenu.main, mode=StartMode.RESET_STACK)
+        await manager.start(MainMenu.main, mode=StartMode.RESET_STACK, show_mode=ShowMode.EDIT)
     else:
         logger.warning(f"[SUBSCRIPTION] Пользователь {user_id} не подписан")
         await callback.answer("❌ Вы ещё не подписались", show_alert=True)
-
-async def on_continue_after_subscription(callback: CallbackQuery, button: Button, manager: DialogManager):
-    user_id = callback.from_user.id
-    bot = manager.middleware_data["bot"]
-    logger.info(f"[SUBSCRIPTION] Пользователь {user_id} нажал 'ДАЛЕЕ'")
-
-    if await check_subscription(user_id, bot):
-        logger.info(f"[SUBSCRIPTION] Пользователь {user_id} подписан. Переход в главное меню.")
-        await manager.start(MainMenu.main, mode=StartMode.RESET_STACK)
-    else:
-        logger.warning(f"[SUBSCRIPTION] Пользователь {user_id} не подписан. Блокируем переход.")
-        await callback.answer("❌ Подпишитесь на канал для продолжения", show_alert=True)
 
 subscription_window = Window(
     Const("📢 Подпишитесь на канал, чтобы продолжить:"),
