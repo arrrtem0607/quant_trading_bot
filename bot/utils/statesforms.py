@@ -8,10 +8,8 @@ class StartDialog(StatesGroup):
     terms = State()
     subscription_check = State()  # 👈 добавили
 
-
 class MainMenu(StatesGroup):
     main = State()
-
 
 class UnifiedStore(StatesGroup):
     dashboard = State()        # окно с активными подписками
@@ -33,7 +31,6 @@ class ExchangeDialog(StatesGroup):
 
 class PartnersDialog(StatesGroup):
     main = State()
-
 
 class ReferralDialog(StatesGroup):
     main = State()
