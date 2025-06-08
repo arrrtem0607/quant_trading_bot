@@ -56,7 +56,12 @@ async def referral_getter(dialog_manager, **kwargs):
     if user.referrer_id:
         sponsor_tg = await orm.users.get_telegram_id_by_id(user.referrer_id)
         if sponsor_tg:
-            sponsor_username = f"@{sponsor_tg}"
+            try:
+                chat = await dialog_manager.middleware_data["bot"].get_chat(sponsor_tg)
+                sponsor_username = f"@{chat.username}" if chat.username else chat.full_name
+            except Exception as e:
+                logger.warning(f"Failed to get sponsor username: {e}")
+                sponsor_username = f"{sponsor_tg}"
 
     logger.info(f"[REFERRAL] User {user.id} requested tree. Levels: {len(stats)}")
 
@@ -85,7 +90,7 @@ async def referral_dialog_getter(dialog_manager, **kwargs):
     bot = dialog_manager.middleware_data["bot"]
     bot_user = await bot.me()
     data["bot_name"] = bot_user.username
-    data["user_id"] = dialog_manager.event.from_user.id
+    data["telegram_id"] = dialog_manager.event.from_user.id
     return data
 
 
@@ -100,7 +105,7 @@ referral_window = Window(
         "💵 Баланс: {balance} USDT (доступный баланс для вывода)\n"\
         "👥 Ваш спонсор {sponsor}\n\n"\
         "Копируй свою партнерскую ссылку и начинай зарабатывать!\n"\
-        "🔗 Ваша ссылка: t.me/{bot_name}?start={user_id}\n\n"\
+        "🔗 Ваша ссылка: t.me/{bot_name}?start={telegram_id}\n\n"\
         "P.S: {total}/{paid_total} (зарегистрировалось/оплатило)"
     ),
     Row(
