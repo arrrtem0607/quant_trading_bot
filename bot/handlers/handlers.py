@@ -18,9 +18,9 @@ async def start_handler(message: Message, dialog_manager: DialogManager):
     referrer_id = None
 
     if message.text and message.text.startswith("/start ") and message.text.split(" ")[1].isdigit():
-        referrer_id = int(message.text.split(" ")[1])
-        if referrer_id == user_id:
-            referrer_id = None
+        referrer_tg = int(message.text.split(" ")[1])
+        if referrer_tg != user_id:
+            referrer_id = await orm.users.get_id_by_telegram(referrer_tg)
 
     await orm.users.register_user(user_id, referrer_id)
     user = await orm.users.get_user(user_id)

@@ -36,3 +36,7 @@ class ReferralDialog(StatesGroup):
     main = State()
 
 
+class ReferralDialog(StatesGroup):
+    main = State()
+
+
