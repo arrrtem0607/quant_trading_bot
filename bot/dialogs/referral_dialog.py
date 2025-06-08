@@ -77,9 +77,8 @@ async def referral_dialog_getter(dialog_manager, **kwargs):
     data = await referral_getter(dialog_manager)
     data["levels_formatted"] = format_levels(data)
     bot = dialog_manager.middleware_data["bot"]
-    if not getattr(bot, "me", None):
-        await bot.get_me()
-    data["bot_name"] = bot.me.username
+    bot_user = await bot.me()
+    data["bot_name"] = bot_user.username
     data["user_id"] = dialog_manager.event.from_user.id
     return data
 
