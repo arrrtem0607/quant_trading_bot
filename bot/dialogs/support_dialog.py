@@ -1,5 +1,5 @@
 from aiogram_dialog import Dialog, Window
-from aiogram_dialog.widgets.kbd import Button, Row, Url
+from aiogram_dialog.widgets.kbd import Button, Url, Column
 from aiogram_dialog.widgets.text import Const, Format
 
 from bot.utils.statesforms import SupportDialog, MainMenu
@@ -15,7 +15,7 @@ async def support_getter(dialog_manager, **kwargs):
 
 support_window = Window(
     Format(LEXICON_RU["support_message"]),
-    Row(
+    Column(
         Url(Const(LEXICON_RU["support_open"]), url=Format("https://t.me/arrrteminc")),
         Button(Const(LEXICON_RU["btn_back_to_menu"]), id="back_to_menu", on_click=lambda c, b, m: m.start(MainMenu.main)),
     ),
