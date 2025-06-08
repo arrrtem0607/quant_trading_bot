@@ -39,7 +39,6 @@ async def get_all_routers():
     router.include_router(partners_dialog_router)
     router.include_router(referral_dialog_router)
     router.include_router(support_dialog_router)
-
     setup_dialogs(router)
 
     return router
