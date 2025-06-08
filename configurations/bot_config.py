@@ -6,6 +6,7 @@ class BotConfig:
         self.__token: str = env("TOKEN")
         self.__developers_id: list[int] = env.list("DEVELOPER_IDS", subcast=int)
         self.__yandex_disk_token: str | None = env("YANDEX_DISK_TOKEN", default=None)
+        self.__support_link: str | None = env("SUPPORT_LINK", default=None)
 
     def get_token(self) -> str:
         return self.__token
@@ -15,3 +16,6 @@ class BotConfig:
 
     def get_developers_id(self) -> list[int]:
         return self.__developers_id
+
+    def get_support_link(self) -> str | None:
+        return self.__support_link
