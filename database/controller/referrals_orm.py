@@ -46,7 +46,6 @@ class ReferralsORM:
         )
         result = await session.execute(stmt)
         return float(result.scalar() or 0)
-
     @session_manager
     async def get_levels_stats(self, session, user_id: int, max_level: int = 10) -> dict[int, dict]:
         stats: dict[int, dict] = {}
