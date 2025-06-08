@@ -30,19 +30,25 @@ async def referral_getter(dialog_manager, **kwargs):
     if not user:
         return {}
 
-    tree = await orm.referrals.get_referral_tree(user.id)
+    stats = await orm.referrals.get_levels_stats(user.id)
     levels = []
     total = 0
     total_paid = 0
     for lvl in range(1, 11):
-        ids = tree.get(lvl, [])
-        count = len(ids)
-        paid = await orm.referrals.count_paid(ids)
-        total += count
-        total_paid += paid
-        levels.append({"level": lvl, "count": count, "paid": paid, "percent": LEVEL_PERCENTS[lvl]})
+        info = stats.get(lvl, {"count": 0, "paid": 0, "earned": 0})
+        total += info["count"]
+        total_paid += info["paid"]
+        levels.append(
+            {
+                "level": lvl,
+                "count": info["count"],
+                "paid": info["paid"],
+                "earned": info["earned"],
+                "percent": LEVEL_PERCENTS[lvl],
+            }
+        )
 
-    earned = await orm.referrals.sum_transactions(user.id, TransactionType.REFERRAL)
+    earned = await orm.referrals.sum_rewards(user.id)
     withdrawn = await orm.referrals.sum_transactions(user.id, TransactionType.WITHDRAWAL)
     balance = earned - withdrawn
 
@@ -52,7 +58,7 @@ async def referral_getter(dialog_manager, **kwargs):
         if sponsor_tg:
             sponsor_username = f"@{sponsor_tg}"
 
-    logger.info(f"[REFERRAL] User {user.id} requested tree. Levels: {len(tree)}")
+    logger.info(f"[REFERRAL] User {user.id} requested tree. Levels: {len(stats)}")
 
     return {
         "levels": levels,
@@ -68,7 +74,7 @@ def format_levels(data):
     lines = []
     for item in data["levels"]:
         lines.append(
-            f"Уровень {item['level']} ({item['percent']}%) {item['count']}/{item['paid']} чел. Заработано ({item['paid']}) USDT"
+            f"Уровень {item['level']} ({item['percent']}%) {item['count']}/{item['paid']} чел. Заработано ({item['earned']}) USDT"
         )
     return "\n".join(lines)
 

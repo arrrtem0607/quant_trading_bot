@@ -15,14 +15,12 @@ config = get_config()
 @router.message(CommandStart())
 async def start_handler(message: Message, dialog_manager: DialogManager):
     user_id = message.from_user.id
-    referrer_id = None
+    referrer_tg = None
 
     if message.text and message.text.startswith("/start ") and message.text.split(" ")[1].isdigit():
         referrer_tg = int(message.text.split(" ")[1])
-        if referrer_tg != user_id:
-            referrer_id = await orm.users.get_id_by_telegram(referrer_tg)
 
-    await orm.users.register_user(user_id, referrer_id)
+    await orm.users.register_user(user_id, referrer_tg)
     user = await orm.users.get_user(user_id)
 
     # Если пользователь уже подтверждал условия — сразу главное меню
