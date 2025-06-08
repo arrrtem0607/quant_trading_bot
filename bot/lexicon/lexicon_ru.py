@@ -113,4 +113,6 @@ LEXICON_RU = {
     "exchange_register_btn": "👤 Регистрация новых пользователей",
     "exchange_back_btn": "🔙 Назад",
     "partners_title": "🤝 Официальные партнёры:",
+    "support_message": "Свяжитесь с нашей поддержкой по кнопке ниже:",
+    "support_open": "📞 Открыть чат поддержки",
 }
