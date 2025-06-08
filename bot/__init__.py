@@ -11,6 +11,7 @@ from bot.dialogs.products_dialog import unified_store_dialog as products_dialog_
 from bot.dialogs.subscription_dialog import subscription_dialog as subscription_dialog_router
 from bot.dialogs.connect_exchange_dialog import connect_exchange_dialog as connect_exchange_dialog_router
 from bot.dialogs.partners_dialog import partners_dialog as partners_dialog_router
+from bot.dialogs.referral_dialog import referral_dialog as referral_dialog_router
 from database.entities.core import Database
 from configurations import get_config
 
@@ -35,6 +36,7 @@ async def get_all_routers():
     router.include_router(subscription_dialog_router)
     router.include_router(connect_exchange_dialog_router)
     router.include_router(partners_dialog_router)
+    router.include_router(referral_dialog_router)
 
     setup_dialogs(router)
 

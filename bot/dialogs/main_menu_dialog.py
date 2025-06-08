@@ -4,7 +4,7 @@ from aiogram_dialog.widgets.text import Const
 from aiogram_dialog import DialogManager
 from aiogram.types import CallbackQuery
 
-from bot.utils.statesforms import MainMenu, UnifiedStore, PartnersDialog
+from bot.utils.statesforms import MainMenu, UnifiedStore, ReferralDialog
 from bot.lexicon.lexicon_ru import LEXICON_RU
 
 # ──────────────────────────────────────────────
@@ -17,7 +17,7 @@ async def on_my_subs_pressed(callback: CallbackQuery, button: Button, manager: D
     await manager.start(UnifiedStore.dashboard, show_mode=ShowMode.EDIT)
 
 async def on_stub_pressed(callback: CallbackQuery, button: Button, manager: DialogManager):
-    await manager.start(PartnersDialog.main, show_mode=ShowMode.EDIT)
+    await manager.start(ReferralDialog.main, show_mode=ShowMode.EDIT)
 
 # ──────────────────────────────────────────────
 # WINDOW
