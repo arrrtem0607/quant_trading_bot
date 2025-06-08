@@ -6,6 +6,7 @@ from database.controller.products_orm import ProductsORM
 from database.controller.subscriptions_orm import SubscriptionsORM
 from database.controller.transactions_orm import TransactionsORM
 from database.controller.exchanges_orm import ExchangesORM
+from database.controller.referrals_orm import ReferralsORM
 from database.db_utils import session_manager
 from utils.logger import setup_logger
 
@@ -19,6 +20,7 @@ class ORMController:
         self.subscriptions = SubscriptionsORM(self)
         self.transactions = TransactionsORM(self)
         self.exchanges = ExchangesORM(self)
+        self.referrals = ReferralsORM(self)
         logger.info("ORMController initialized")
 
     async def create_tables(self):
