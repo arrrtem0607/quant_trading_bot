@@ -30,7 +30,7 @@ async def run_bot():
     config = get_config()
 
     redis = Redis(host="localhost")
-    key_builder = DefaultKeyBuilder(with_destiny=True)
+    key_builder = DefaultKeyBuilder(with_destiny=True, with_bot_id=True)
     storage = RedisStorage(redis=redis, key_builder=key_builder)
 
     bot = Bot(
